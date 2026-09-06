@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+function out(ok, data, error) { process.stdout.write(JSON.stringify(ok ? { code: 0, ok: true, data } : { code: 1, ok: false, error }) + '\n'); }
+const args = process.argv.slice(2); const cmd = args[0] || '';
+function pd(s) { const m = String(s).match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/); if (!m) return null; const d = new Date(+m[1], +m[2] - 1, +m[3]); return isNaN(d) ? null : d; }
+const WORK = { '2026-01-26': false, '2026-02-14': true, '2026-02-28': true };
+function workdays(a, b) { let d = new Date(a); const en = new Date(b); let n = 0; while (d < en) { const dow = d.getDay(); const k = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); const ov = WORK[k]; const wd = ov !== undefined ? ov : (dow !== 0 && dow !== 6); if (wd) n++; d.setDate(d.getDate() + 1); } return n; }
+try {
+  if (cmd === 'status' || cmd === 'auth') return out(true, { ok: 'datecalc ready' });
+  if (cmd === 'add') { const s = pd(args[1]); if (!s) return out(false, null, '用法: datecalc add <YYYY-MM-DD> <天数>'); const n = parseInt(args[2]); if (isNaN(n)) return out(false, null, '天数无效'); const r = new Date(s); r.setDate(r.getDate() + n); return out(true, { from: args[1], days: n, result: r.getFullYear() + '-' + String(r.getMonth() + 1).padStart(2, '0') + '-' + String(r.getDate()).padStart(2, '0') }); }
+  if (cmd === 'between') { const a = pd(args[1]), b = pd(args[2]); if (!a || !b) return out(false, null, '用法: datecalc between <起> <止>'); const diff = Math.round((b - a) / 86400000); return out(true, { start: args[1], end: args[2], days: Math.abs(diff), workdays: workdays(new Date(Math.min(a, b)), new Date(Math.max(a, b))), note: '工作日按周一至周五估算（不含调休细节），准确节假日用 cn-holiday' }); }
+  if (cmd === 'age') { const b = pd(args[1]); if (!b) return out(false, null, '用法: datecalc age <YYYY-MM-DD 出生日期>'); const now = new Date(); let y = now.getFullYear() - b.getFullYear(); let m = now.getMonth() - b.getMonth(); let d = now.getDate() - b.getDate(); if (d < 0) { m--; d += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); } if (m < 0) { y--; m += 12; } return out(true, { birth: args[1], ageYears: y, ageMonths: y * 12 + m, daysOld: Math.floor((now - b) / 86400000) }); }
+  if (cmd === 'nworkday') { const s = pd(args[1]); const n = parseInt(args[2]) || 1; if (!s) return out(false, null, '用法: datecalc nworkday <YYYY-MM-DD> [N 个工作日]'); let d = new Date(s); let cnt = 0; while (cnt < n) { d.setDate(d.getDate() + 1); const dow = d.getDay(); if (dow !== 0 && dow !== 6) cnt++; } return out(true, { from: args[1], n, result: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0') }); }
+  return out(false, null, '未知命令。支持: status/auth/add/between/age/nworkday');
+} catch (e) { out(false, null, '执行错误: ' + e.message); }

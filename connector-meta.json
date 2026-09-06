@@ -1,0 +1,18 @@
+{
+ "name": "datecalc-cli",
+ "type": "cli",
+ "version": "0.1.0",
+ "displayName": "日期计算器",
+ "description": "日期加减/间隔与工作日估算/年龄工龄/往后第 N 个工作日。纯本地计算。",
+ "icon": "icon.svg",
+ "skills": [
+  "skills/SKILL.md"
+ ],
+ "minWorkbuddyVersion": "4.22.15",
+ "examples_zh": [
+  "2026-03-15 加 45 天是几号",
+  "从今天到 2026-12-31 有多少个工作日",
+  "按 1995-06-18 算我的年龄"
+ ],
+ "examples_en": []
+}

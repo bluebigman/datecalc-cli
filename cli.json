@@ -1,0 +1,28 @@
+{
+ "runtime": {
+  "type": "node",
+  "version": "18"
+ },
+ "init": {
+  "darwin": "npm install -g git+https://github.com/bluebigman/datecalc-cli.git",
+  "linux": "npm install -g git+https://github.com/bluebigman/datecalc-cli.git",
+  "win32": "npm install -g git+https://github.com/bluebigman/datecalc-cli.git"
+ },
+ "auth": {
+  "darwin": "datecalc auth",
+  "linux": "datecalc auth",
+  "win32": "datecalc.cmd auth"
+ },
+ "unAuth": {
+  "darwin": "datecalc unAuth",
+  "linux": "datecalc unAuth",
+  "win32": "datecalc.cmd unAuth"
+ },
+ "status": {
+  "darwin": "datecalc status",
+  "linux": "datecalc status",
+  "win32": "datecalc.cmd status"
+ },
+ "statusMatch": "ok",
+ "authStrategy": "none"
+}
